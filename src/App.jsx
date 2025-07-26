@@ -10,6 +10,7 @@ function App() {
   const [database, setDatabase] = useState(null);
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
   const [error, setError] = useState(null);
+  const [selectedNodeId, setSelectedNodeId] = useState('start');
 
   // Función para manejar la carga de archivos PGN
   const handleFileUpload = (event) => {
@@ -43,6 +44,7 @@ function App() {
       const parsedDatabase = pgnRead(content);
       setDatabase(parsedDatabase);
       setCurrentGameIndex(0);
+      setSelectedNodeId('start');
       setError(null);
     } catch (err) {
       setError(`Error al parsear PGN: ${err.message}`);
@@ -247,7 +249,10 @@ function App() {
                 Partida {currentGameIndex + 1} de {database.gameCount()}
               </span>
               <button
-                onClick={() => setCurrentGameIndex(Math.max(0, currentGameIndex - 1))}
+                onClick={() => {
+                  setCurrentGameIndex(Math.max(0, currentGameIndex - 1));
+                  setSelectedNodeId('start');
+                }}
                 disabled={currentGameIndex === 0}
                 style={{ 
                   margin: '0 10px',
@@ -262,7 +267,10 @@ function App() {
                 ← Anterior
               </button>
               <button
-                onClick={() => setCurrentGameIndex(Math.min(database.gameCount() - 1, currentGameIndex + 1))}
+                onClick={() => {
+                  setCurrentGameIndex(Math.min(database.gameCount() - 1, currentGameIndex + 1));
+                  setSelectedNodeId('start');
+                }}
                 disabled={currentGameIndex === database.gameCount() - 1}
                 style={{ 
                   margin: '0 10px',
@@ -330,177 +338,208 @@ function App() {
             </div>
           </div>
 
-          {/* Tablero de navegación - estilo Torre Negra */}
+          {/* Layout principal: Tablero a la izquierda, comentarios a la derecha */}
           <div style={{ 
             margin: '40px 0',
-            textAlign: 'center'
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '30px',
+            alignItems: 'start'
           }}>
-            <h3 style={{ 
-              color: '#2c3e50',
-              marginBottom: '20px',
-              fontSize: '1.5em'
-            }}>
-              🎯 Tablero Interactivo
-            </h3>
+            
+            {/* Columna izquierda - Tablero */}
             <div style={{ 
-              maxWidth: '500px',
-              margin: '0 auto',
-              border: '1px solid #ecf0f1',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
-            }}>
-              <NavigationBoard
-                game={currentGame}
-                squareSize={50}
-                pieceset="cburnett"
-                coordinateVisible={true}
-                animated={true}
-                moveArrowVisible={true}
-                turnVisible={true}
-                playButtonVisible={true}
-                flipButtonVisible={true}
-              />
-            </div>
-          </div>
-
-          {/* Análisis de movimientos - estilo elegante */}
-          <div style={{ 
-            margin: '40px 0',
-            padding: '25px',
-            backgroundColor: '#fff',
-            border: '1px solid #ecf0f1',
-            borderRadius: '8px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-          }}>
-            <h3 style={{ 
-              color: '#2c3e50',
-              marginBottom: '20px',
-              fontSize: '1.5em',
               textAlign: 'center'
             }}>
-              📝 Análisis de la Partida
-            </h3>
-            <div style={{ 
-              backgroundColor: '#f8f9fa',
-              padding: '20px',
-              borderRadius: '6px',
-              border: '1px solid #e9ecef'
-            }}>
-              <Movetext
-                game={currentGame}
-                pieceSymbols="figurines"
-                diagramVisible={true}
-                headerVisible={true}
-              />
+              <h3 style={{ 
+                color: '#2c3e50',
+                marginBottom: '20px',
+                fontSize: '1.5em'
+              }}>
+                🎯 Tablero Interactivo
+              </h3>
+              <div style={{ 
+                border: '1px solid #ecf0f1',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                backgroundColor: '#fff'
+              }}>
+                <NavigationBoard
+                  game={currentGame}
+                  squareSize={50}
+                  pieceset="cburnett"
+                  coordinateVisible={true}
+                  animated={true}
+                  moveArrowVisible={true}
+                  turnVisible={true}
+                  playButtonVisible={true}
+                  flipButtonVisible={true}
+                  nodeId={selectedNodeId}
+                  onNodeIdChanged={setSelectedNodeId}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Comentarios detallados - estilo Torre Negra */}
-          <div style={{ 
-            margin: '40px 0',
-            padding: '25px',
-            backgroundColor: '#fff',
-            border: '1px solid #ecf0f1',
-            borderRadius: '8px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-          }}>
-            <h3 style={{ 
-              color: '#2c3e50',
-              marginBottom: '20px',
-              fontSize: '1.5em',
-              textAlign: 'center'
-            }}>
-              💭 Comentarios de la Partida
-            </h3>
-            <div style={{ 
-              maxHeight: '500px',
-              overflowY: 'auto',
-              padding: '20px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '6px',
-              border: '1px solid #e9ecef'
-            }}>
-              {(() => {
-                try {
-                  const mainVariation = currentGame.mainVariation();
-                  const nodes = mainVariation.nodes();
-                  
-                  return nodes.map((node, index) => (
-                    <div key={index} style={{ 
-                      margin: '15px 0',
-                      padding: '15px',
-                      backgroundColor: '#fff',
-                      border: '1px solid #e9ecef',
-                      borderRadius: '6px',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                    }}>
-                      <p style={{ 
-                        fontWeight: 'bold',
-                        color: '#2c3e50',
-                        marginBottom: '10px',
-                        fontSize: '1.1em'
+            {/* Columna derecha - Análisis y comentarios con scroll */}
+            <div 
+              className="chess-analysis-container"
+              style={{ 
+                backgroundColor: '#fff',
+                border: '1px solid #ecf0f1',
+                borderRadius: '8px',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                padding: '25px',
+                height: 'fit-content',
+                maxHeight: '500px',
+                overflowY: 'auto'
+              }}
+            >
+              <h3 style={{ 
+                color: '#2c3e50',
+                marginBottom: '20px',
+                fontSize: '1.5em',
+                textAlign: 'center'
+              }}>
+                📝 Análisis de la Partida
+              </h3>
+              
+              {/* Movetext interactivo con sincronización */}
+              <div 
+                className="chess-movetext-container"
+                style={{ 
+                  backgroundColor: '#f8f9fa',
+                  padding: '20px',
+                  borderRadius: '6px',
+                  border: '1px solid #e9ecef',
+                  marginBottom: '25px'
+                }}
+              >
+                <div style={{ 
+                  marginBottom: '10px',
+                  padding: '8px 12px',
+                  backgroundColor: '#e8f4f8',
+                  borderRadius: '4px',
+                  border: '1px solid #3498db',
+                  fontSize: '0.9em',
+                  color: '#2c3e50'
+                }}>
+                  💡 <strong>Haz clic en cualquier movimiento para navegar en el tablero</strong>
+                </div>
+                <Movetext
+                  game={currentGame}
+                  pieceSymbols="figurines"
+                  diagramVisible={false}
+                  headerVisible={false}
+                  interactionMode="selectMove"
+                  selection={selectedNodeId}
+                  onMoveSelected={(nodeId, evtOrigin) => {
+                    console.log('Movimiento seleccionado:', nodeId, 'Origen:', evtOrigin);
+                    setSelectedNodeId(nodeId || 'start');
+                  }}
+                />
+              </div>
+
+              {/* Comentarios detallados */}
+              <h4 style={{ 
+                color: '#2c3e50',
+                marginBottom: '15px',
+                fontSize: '1.2em',
+                textAlign: 'center'
+              }}>
+                💭 Comentarios de la Partida
+              </h4>
+              <div style={{ 
+                maxHeight: '300px',
+                overflowY: 'auto',
+                padding: '15px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '6px',
+                border: '1px solid #e9ecef'
+              }}>
+                {(() => {
+                  try {
+                    const mainVariation = currentGame.mainVariation();
+                    const nodes = mainVariation.nodes();
+                    
+                    return nodes.map((node, index) => (
+                      <div key={index} style={{ 
+                        margin: '10px 0',
+                        padding: '12px',
+                        backgroundColor: '#fff',
+                        border: '1px solid #e9ecef',
+                        borderRadius: '6px',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                       }}>
-                        Movimiento {index + 1}: {node.notation()}
-                      </p>
-                      {node.comment() && (
                         <p style={{ 
-                          margin: '10px 0',
-                          padding: '12px',
-                          backgroundColor: '#e8f4f8',
-                          borderRadius: '4px',
-                          fontStyle: 'italic',
+                          fontWeight: 'bold',
                           color: '#2c3e50',
-                          borderLeft: '4px solid #3498db'
+                          marginBottom: '8px',
+                          fontSize: '1em'
                         }}>
-                          💬 {node.comment()}
+                          Movimiento {index + 1}: {node.notation()}
                         </p>
-                      )}
-                      {node.variations && node.variations().length > 0 && (
-                        <div style={{ 
-                          margin: '10px 0',
-                          padding: '12px',
-                          backgroundColor: '#fff3cd',
-                          borderRadius: '4px',
-                          border: '1px solid #ffeaa7'
-                        }}>
+                        {node.comment() && (
                           <p style={{ 
-                            fontWeight: 'bold',
-                            color: '#856404',
-                            marginBottom: '8px'
+                            margin: '8px 0',
+                            padding: '10px',
+                            backgroundColor: '#e8f4f8',
+                            borderRadius: '4px',
+                            fontStyle: 'italic',
+                            color: '#2c3e50',
+                            borderLeft: '4px solid #3498db',
+                            fontSize: '0.9em'
                           }}>
-                            Variaciones:
+                            💬 {node.comment()}
                           </p>
-                          {node.variations().map((variation, varIndex) => (
-                            <p key={varIndex} style={{ 
-                              margin: '5px 0',
-                              padding: '8px',
-                              backgroundColor: '#fff',
-                              borderRadius: '3px',
-                              border: '1px solid #ffeaa7',
+                        )}
+                        {node.variations && node.variations().length > 0 && (
+                          <div style={{ 
+                            margin: '8px 0',
+                            padding: '10px',
+                            backgroundColor: '#fff3cd',
+                            borderRadius: '4px',
+                            border: '1px solid #ffeaa7'
+                          }}>
+                            <p style={{ 
+                              fontWeight: 'bold',
+                              color: '#856404',
+                              marginBottom: '6px',
                               fontSize: '0.9em'
                             }}>
-                              {variation.comment() && `💭 ${variation.comment()} `}
-                              {variation.nodes().map(n => n.notation()).join(' ')}
+                              Variaciones:
                             </p>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ));
-                } catch (err) {
-                  console.error('Error al procesar movimientos:', err);
-                  return (
-                    <p style={{ 
-                      color: '#e74c3c',
-                      textAlign: 'center',
-                      padding: '20px'
-                    }}>
-                      Error al procesar los movimientos de la partida.
-                    </p>
-                  );
-                }
-              })()}
+                            {node.variations().map((variation, varIndex) => (
+                              <p key={varIndex} style={{ 
+                                margin: '4px 0',
+                                padding: '6px',
+                                backgroundColor: '#fff',
+                                borderRadius: '3px',
+                                border: '1px solid #ffeaa7',
+                                fontSize: '0.8em'
+                              }}>
+                                {variation.comment() && `💭 ${variation.comment()} `}
+                                {variation.nodes().map(n => n.notation()).join(' ')}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ));
+                  } catch (err) {
+                    console.error('Error al procesar movimientos:', err);
+                    return (
+                      <p style={{ 
+                        color: '#e74c3c',
+                        textAlign: 'center',
+                        padding: '20px'
+                      }}>
+                        Error al procesar los movimientos de la partida.
+                      </p>
+                    );
+                  }
+                })()}
+              </div>
             </div>
           </div>
         </div>

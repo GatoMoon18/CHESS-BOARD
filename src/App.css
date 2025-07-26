@@ -40,3 +40,48 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Estilos personalizados para scrollbars */
+.chess-analysis-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chess-analysis-container::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.chess-analysis-container::-webkit-scrollbar-thumb {
+  background: #bdc3c7;
+  border-radius: 4px;
+}
+
+.chess-analysis-container::-webkit-scrollbar-thumb:hover {
+  background: #95a5a6;
+}
+
+/* Estilos para el componente Movetext */
+.chess-movetext-container {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  line-height: 1.6;
+}
+
+.chess-movetext-container .kokopu-movetext {
+  background: transparent !important;
+}
+
+.chess-movetext-container .kokopu-movetext .kokopu-move {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+.chess-movetext-container .kokopu-movetext .kokopu-move:hover {
+  background-color: #e8f4f8 !important;
+}
+
+.chess-movetext-container .kokopu-movetext .kokopu-move.kokopu-selected {
+  background-color: #3498db !important;
+  color: white !important;
+}
