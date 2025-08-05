@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   // Configuración para GitHub Pages
-  base: process.env.NODE_ENV === 'production' ? '/my-chess-frontend/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/CHESS-BOARD/' : '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
