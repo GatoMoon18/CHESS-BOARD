@@ -411,8 +411,7 @@ function App() {
                   backgroundColor: '#f8f9fa',
                   padding: '20px',
                   borderRadius: '6px',
-                  border: '1px solid #e9ecef',
-                  marginBottom: '25px'
+                  border: '1px solid #e9ecef'
                 }}
               >
                 <div style={{ 
@@ -440,106 +439,7 @@ function App() {
                 />
               </div>
 
-              {/* Comentarios detallados */}
-              <h4 style={{ 
-                color: '#2c3e50',
-                marginBottom: '15px',
-                fontSize: '1.2em',
-                textAlign: 'center'
-              }}>
-                💭 Comentarios de la Partida
-              </h4>
-              <div style={{ 
-                maxHeight: '300px',
-                overflowY: 'auto',
-                padding: '15px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '6px',
-                border: '1px solid #e9ecef'
-              }}>
-                {(() => {
-                  try {
-                    const mainVariation = currentGame.mainVariation();
-                    const nodes = mainVariation.nodes();
-                    
-                    return nodes.map((node, index) => (
-                      <div key={index} style={{ 
-                        margin: '10px 0',
-                        padding: '12px',
-                        backgroundColor: '#fff',
-                        border: '1px solid #e9ecef',
-                        borderRadius: '6px',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                      }}>
-                        <p style={{ 
-                          fontWeight: 'bold',
-                          color: '#2c3e50',
-                          marginBottom: '8px',
-                          fontSize: '1em'
-                        }}>
-                          Movimiento {index + 1}: {node.notation()}
-                        </p>
-                        {node.comment() && (
-                          <p style={{ 
-                            margin: '8px 0',
-                            padding: '10px',
-                            backgroundColor: '#e8f4f8',
-                            borderRadius: '4px',
-                            fontStyle: 'italic',
-                            color: '#2c3e50',
-                            borderLeft: '4px solid #3498db',
-                            fontSize: '0.9em'
-                          }}>
-                            💬 {node.comment()}
-                          </p>
-                        )}
-                        {node.variations && node.variations().length > 0 && (
-                          <div style={{ 
-                            margin: '8px 0',
-                            padding: '10px',
-                            backgroundColor: '#fff3cd',
-                            borderRadius: '4px',
-                            border: '1px solid #ffeaa7'
-                          }}>
-                            <p style={{ 
-                              fontWeight: 'bold',
-                              color: '#856404',
-                              marginBottom: '6px',
-                              fontSize: '0.9em'
-                            }}>
-                              Variaciones:
-                            </p>
-                            {node.variations().map((variation, varIndex) => (
-                              <p key={varIndex} style={{ 
-                                margin: '4px 0',
-                                padding: '6px',
-                                backgroundColor: '#fff',
-                                borderRadius: '3px',
-                                border: '1px solid #ffeaa7',
-                                fontSize: '0.8em'
-                              }}>
-                                {variation.comment() && `💭 ${variation.comment()} `}
-                                {variation.nodes().map(n => n.notation()).join(' ')}
-                              </p>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ));
-                  } catch (err) {
-                    console.error('Error al procesar movimientos:', err);
-                    return (
-                      <p style={{ 
-                        color: '#e74c3c',
-                        textAlign: 'center',
-                        padding: '20px'
-                      }}>
-                        Error al procesar los movimientos de la partida.
-                      </p>
-                    );
-                  }
-                })()}
-              </div>
+
             </div>
           </div>
         </div>
